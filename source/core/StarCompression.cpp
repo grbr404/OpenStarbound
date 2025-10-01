@@ -2,7 +2,7 @@
 #include "StarFormat.hpp"
 #include "StarLexicalCast.hpp"
 
-#include <zlib.h>
+#include <zlib-ng.h>
 #include <errno.h>
 #include <string.h>
 
@@ -21,7 +21,7 @@ void compressData(ByteArray const& in, ByteArray& out, CompressionLevel compress
   strm.zalloc = Z_NULL;
   strm.zfree = Z_NULL;
   strm.opaque = Z_NULL;
-  int deflate_res = deflateInit(&strm, compression);
+  int deflate_res = zng_deflateInit(&strm, compression);
   if (deflate_res != Z_OK)
     throw IOException(strf("Failed to initialise deflate ({})", deflate_res));
 
@@ -30,14 +30,14 @@ void compressData(ByteArray const& in, ByteArray& out, CompressionLevel compress
   strm.next_out = tempBuffer.get();
   strm.avail_out = BUFSIZE;
   while (deflate_res == Z_OK) {
-    deflate_res = deflate(&strm, Z_FINISH);
+    deflate_res = zng_deflate(&strm, Z_FINISH);
     if (strm.avail_out == 0) {
       out.append((char const*)tempBuffer.get(), BUFSIZE);
       strm.next_out = tempBuffer.get();
       strm.avail_out = BUFSIZE;
     }
   }
-  deflateEnd(&strm);
+  zng_deflateEnd(&strm);
 
   if (deflate_res != Z_STREAM_END)
     throw IOException(strf("Internal error in uncompressData, deflate_res is {}", deflate_res));
@@ -64,7 +64,7 @@ void uncompressData(const char* in, size_t inLen, ByteArray& out, size_t limit) 
   strm.zalloc = Z_NULL;
   strm.zfree = Z_NULL;
   strm.opaque = Z_NULL;
-  int inflate_res = inflateInit(&strm);
+  int inflate_res = zng_inflateInit(&strm);
   if (inflate_res != Z_OK)
     throw IOException(strf("Failed to initialise inflate ({})", inflate_res));
 
@@ -74,13 +74,13 @@ void uncompressData(const char* in, size_t inLen, ByteArray& out, size_t limit) 
   strm.avail_out = BUFSIZE;
 
   while (inflate_res == Z_OK || inflate_res == Z_BUF_ERROR) {
-    inflate_res = inflate(&strm, Z_FINISH);
+    inflate_res = zng_inflate(&strm, Z_FINISH);
     if (strm.avail_out == 0) {
       out.append((char const*)tempBuffer.get(), BUFSIZE);
       strm.next_out = tempBuffer.get();
       strm.avail_out = BUFSIZE;
       if (limit && out.size() >= limit) {
-        inflateEnd(&strm);
+        zng_inflateEnd(&strm);
         throw IOException(strf("hit uncompressData limit of {} bytes", limit));
         break;
       }
@@ -88,7 +88,7 @@ void uncompressData(const char* in, size_t inLen, ByteArray& out, size_t limit) 
       break;
     }
   }
-  inflateEnd(&strm);
+  zng_inflateEnd(&strm);
 
   if (inflate_res != Z_STREAM_END)
     throw IOException(strf("Internal error in uncompressData, inflate_res is {}", inflate_res));
