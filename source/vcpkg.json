@@ -7,6 +7,7 @@
     { "name": "cpptrace", "platform": "!windows" },
     "libvorbis",
     "zlib",
+    "zlib-ng",
     "freetype",
     "libpng",
     "opus",
