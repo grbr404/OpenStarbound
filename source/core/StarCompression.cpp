@@ -129,7 +129,7 @@ CompressedFile::~CompressedFile() {
 }
 
 StreamOffset CompressedFile::pos() {
-  return zng_gztell((zng_gzFile)m_file);
+  return zng_gztell((gzFile)m_file);
 }
 
 void CompressedFile::seek(StreamOffset offset, IOSeek seekMode) {
@@ -137,9 +137,9 @@ void CompressedFile::seek(StreamOffset offset, IOSeek seekMode) {
 
   int retCode;
   if (seekMode == IOSeek::Relative) {
-    retCode = zng_gzseek((zng_gzFile)m_file, (z_off_t)offset, SEEK_CUR);
+    retCode = zng_gzseek((gzFile)m_file, (z_off_t)offset, SEEK_CUR);
   } else if (seekMode == IOSeek::Absolute) {
-    retCode = zng_gzseek((zng_gzFile)m_file, (z_off_t)offset, SEEK_SET);
+    retCode = zng_gzseek((gzFile)m_file, (z_off_t)offset, SEEK_SET);
   } else {
     throw IOException("Cannot seek with SeekEnd in compressed file");
   }
@@ -147,7 +147,7 @@ void CompressedFile::seek(StreamOffset offset, IOSeek seekMode) {
   StreamOffset endPos = pos();
 
   if (retCode < 0) {
-    throw IOException::format("Seek error: {}", zng_gzerror((zng_gzFile)m_file, 0));
+    throw IOException::format("Seek error: {}", zng_gzerror((gzFile)m_file, 0));
   } else if ((seekMode == IOSeek::Relative && begPos + offset != endPos)
       || (seekMode == IOSeek::Absolute && offset != endPos)) {
     throw EofException("Error, unexpected end of file found");
@@ -155,18 +155,18 @@ void CompressedFile::seek(StreamOffset offset, IOSeek seekMode) {
 }
 
 bool CompressedFile::atEnd() {
-  return zng_gzeof((zng_gzFile)m_file);
+  return zng_gzeof((gzFile)m_file);
 }
 
 size_t CompressedFile::read(char* data, size_t len) {
   if (len == 0)
     return 0;
 
-  int ret = zng_gzread((zng_gzFile)m_file, data, len);
+  int ret = zng_gzread((gzFile)m_file, data, len);
   if (ret == 0)
     throw EofException("Error, unexpected end of file found");
   else if (ret == -1)
-    throw IOException::format("Read error: {}", zng_gzerror((zng_gzFile)m_file, 0));
+    throw IOException::format("Read error: {}", zng_gzerror((gzFile)m_file, 0));
   else
     return (size_t)ret;
 }
@@ -175,9 +175,9 @@ size_t CompressedFile::write(const char* data, size_t len) {
   if (len == 0)
     return 0;
 
-  int ret = zng_gzwrite((zng_gzFile)m_file, data, len);
+  int ret = zng_gzwrite((gzFile)m_file, data, len);
   if (ret == 0)
-    throw IOException::format("Write error: {}", zng_gzerror((zng_gzFile)m_file, 0));
+    throw IOException::format("Write error: {}", zng_gzerror((gzFile)m_file, 0));
   else
     return (size_t)ret;
 }
@@ -201,7 +201,7 @@ void CompressedFile::open(IOMode mode, CompressionLevel compression) {
 }
 
 void CompressedFile::sync() {
-  zng_gzflush((zng_gzFile)m_file, Z_FULL_FLUSH);
+  zng_gzflush((gzFile)m_file, Z_FULL_FLUSH);
 }
 
 void CompressedFile::open(IOMode mode) {
@@ -228,7 +228,7 @@ void CompressedFile::open(IOMode mode) {
 
 void CompressedFile::close() {
   if (m_file)
-    zng_gzclose((zng_gzFile)m_file);
+    zng_gzclose((gzFile)m_file);
   m_file = 0;
   setMode(IOMode::Closed);
 }
