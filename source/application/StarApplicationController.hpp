@@ -73,6 +73,7 @@ public:
   virtual float renderFps() const = 0;
 
   virtual float getDisplayScale() const = 0;
+  virtual void openUrl(String const& url) = 0;
 
   virtual StatisticsServicePtr statisticsService() const = 0;
   virtual P2PNetworkingServicePtr p2pNetworkingService() const = 0;
