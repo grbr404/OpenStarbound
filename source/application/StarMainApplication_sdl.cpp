@@ -1056,7 +1056,7 @@ private:
         return;
       }
 
-      if (platformServices->m_state->steamAvailable) {
+      if (desktopService()) {
         desktopService->openUrl(sanitized);
       } else {
         SDL_OpenURL(sanitized.utf8Ptr());
@@ -1072,12 +1072,12 @@ private:
         {"steam://url/SteamCommunityHub/", {"https://steamcommunity.com/app/", "/"}},
       };
       for (const auto& [prefix, mapping] : steamMappings) {
-        if (url.startsWith(prefix)) {
+        if (url.beginsWith(prefix)) {
           String id = url.substr(prefix.length());
           return mapping.first + id + mapping.second;
         }
       }
-      if (url.startsWith("http://") || url.startsWith("https://")) {
+      if (url.beginsWith("http://") || url.beginsWith("https://")) {
         return url;
       }
       return "";
