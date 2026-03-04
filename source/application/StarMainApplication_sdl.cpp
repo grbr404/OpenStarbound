@@ -1056,7 +1056,7 @@ private:
         return;
       }
 
-      if (m_state->steamAvailable) {
+      if (services->m_state->steamAvailable) {
         desktopService->openUrl(sanitized);
       } else {
         SDL_OpenURL(sanitized.utf8Ptr());
