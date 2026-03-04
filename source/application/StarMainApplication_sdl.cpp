@@ -1057,7 +1057,7 @@ private:
       }
 
       if (auto steamService = desktopService()) {
-        desktopService->openUrl(sanitized);
+        steamService->openUrl(sanitized);
       } else {
         SDL_OpenURL(sanitized.utf8Ptr());
       }
