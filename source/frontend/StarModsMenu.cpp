@@ -111,7 +111,7 @@ void ModsMenu::openLink() {
 
   auto& guiContext = GuiContext::singleton();
   if (auto desktopService = guiContext.applicationController()->desktopService())
-    m_applicationController->openUrl(link);
+    guiContext.applicationController()->openUrl(link);
   else
     guiContext.setClipboard(link);
 }
@@ -120,7 +120,7 @@ void ModsMenu::openWorkshop() {
   auto assets = Root::singleton().assets();
   auto& guiContext = GuiContext::singleton();
   if (auto desktopService = guiContext.applicationController()->desktopService())
-    m_applicationController->openUrl(assets->json("/interface/modsmenu/modsmenu.config:workshopLink").toString());
+    guiContext.applicationController()->openUrl(assets->json("/interface/modsmenu/modsmenu.config:workshopLink").toString());
 }
 
 }
