@@ -1045,9 +1045,43 @@ private:
       return parent->m_renderRate;
     }
 
-  float getDisplayScale() const override {
-    return parent->m_displayScale;
-  }
+    float getDisplayScale() const override {
+      return parent->m_displayScale;
+    }
+
+    void openUrl(String const& url) {
+      String sanitized = sanitizeSteamLink(url);
+  
+      if (sanitized.empty()) {
+        return;
+      }
+
+      if (m_state->steamAvailable) {
+        desktopService->openUrl(sanitized);
+      } else {
+        SDL_OpenURL(sanitized.utf8Ptr());
+      }
+    }
+
+    String sanitizeSteamLink(String const& url) {
+      static const std::map<String, std::pair<String, String>> steamMappings = {
+        {"steam://url/CommunityFilePage/", {"https://steamcommunity.com/sharedfiles/filedetails/?id=", ""}},
+        {"steam://url/GamePage/", {"https://store.steampowered.com/app/", "/"}},
+        {"steam://url/SteamID/", {"https://steamcommunity.com/profiles/", "/"}},
+        {"steam://url/SteamCommunity/", {"https://steamcommunity.com/", ""}},
+        {"steam://url/SteamCommunityHub/", {"https://steamcommunity.com/app/", "/"}},
+      };
+      for (const auto& [prefix, mapping] : steamMappings) {
+        if (url.startsWith(prefix)) {
+          String id = url.substr(prefix.length());
+          return mapping.first + id + mapping.second;
+        }
+      }
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        return url;
+      }
+      return "";
+    }
 
     StatisticsServicePtr statisticsService() const override {
       if (parent->m_platformServices)
