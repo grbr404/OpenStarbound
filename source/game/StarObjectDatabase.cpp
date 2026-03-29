@@ -416,9 +416,9 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject("perfectlygenericitem", JsonObject({
-          {"orientationIndex", diskStore.getInt("orientationIndex");},
-          {"tilePosition", diskStore.getArray("tilePosition");},
-          {"direction", diskStore.getString("direction");},
+          {"orientationIndex", diskStore.getInt("orientationIndex")},
+          {"tilePosition", diskStore.getArray("tilePosition")},
+          {"direction", diskStore.getString("direction")},
           {"genericItemStorage", diskStore},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod to return this item to normal"}
