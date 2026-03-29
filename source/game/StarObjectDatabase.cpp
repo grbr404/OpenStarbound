@@ -422,6 +422,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
         }));
           if (!object) {
     Logger::error("Fallback object creation");
+        }
       }
     }
   }
