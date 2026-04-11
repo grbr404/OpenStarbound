@@ -131,6 +131,7 @@ public:
   StringMap<uint64_t> availableCurrencies() const;
   uint64_t currency(String const& currencyType) const;
   void addCurrency(String const& currencyType, uint64_t amount);
+  void setCurrency(String const& currencyType, uint64_t amount);
   bool consumeCurrency(String const& currencyType, uint64_t amount);
 
   // A custom bar location primary and secondary cannot point to a slot that
