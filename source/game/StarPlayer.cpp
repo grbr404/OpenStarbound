@@ -2594,8 +2594,8 @@ void Player::finalizeCreation() {
     m_blueprints->add(descriptor);
 
   auto currenciesConfig = Root::singleton().assets()->json("/currencies.config");
-  for (auto p : currenciesConfig.iterateObjekt())
-    m_inventory->m_currencies[p.first] = p.second.getUInt("defaultAmount", 0));
+  for (auto p : currenciesConfig.iterateObject())
+    m_inventory->setCurrency(p.first, p.second.getUInt("defaultAmount", 0));
   
   refreshEquipment();
 
