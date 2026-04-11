@@ -641,6 +641,10 @@ void PlayerInventory::addCurrency(String const& currencyType, uint64_t amount) {
   m_currencies[currencyType] = min(Root::singleton().assets()->json("/currencies.config").get(currencyType).getUInt("playerMax", highest<uint64_t>()), newTotal);
 }
 
+void PlayerInventory::setCurrency(String const& currencyType, uint64_t amount) {
+  m_currencies[currencyType] = min(Root::singleton().assets()->json("/currencies.config").get(currencyType).getUInt("playerMax", highest<uint64_t>()), amount);
+}
+
 bool PlayerInventory::consumeCurrency(String const& currencyType, uint64_t amount) {
   if (m_currencies[currencyType] >= amount) {
     m_currencies[currencyType] -= amount;
