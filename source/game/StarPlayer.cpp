@@ -2593,6 +2593,10 @@ void Player::finalizeCreation() {
   for (auto const& descriptor : Root::singleton().speciesDatabase()->species(m_identity.species)->defaultBlueprints())
     m_blueprints->add(descriptor);
 
+  auto currenciesConfig = Root::singleton().assets()->json("/currencies.config");
+  for (auto p : currenciesConfig.iterateObjekt())
+    m_inventory->m_currencies[p.first] = p.second.getUInt("defaultAmount", 0));
+  
   refreshEquipment();
 
   m_state = State::Idle;
