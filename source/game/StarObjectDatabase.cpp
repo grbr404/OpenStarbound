@@ -395,14 +395,16 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
     if (originalName == "perfectlygenericitem" && originalParameters.contains("genericObjectStorage"))
       newStore = originalParameters.get("genericObjectStorage");
     object = createObject(newStore.getString("name"), newStore.get("parameters"));
-    object->readStoredData(newStore);
-    object->readStoredData(JsonObject({  
-      {"orientationIndex", originalOrientationIndex},      
-      {"tilePosition", originalTilePosition},      
-      {"direction", originalDirection},    
-      {"inputWireNodes", JsonArray()},    
+      
+    Json combinedData = newStore.setAll({  
+      {"orientationIndex", originalOrientationIndex},  
+      {"tilePosition", originalTilePosition},  
+      {"direction", originalDirection},  
+      {"inputWireNodes", JsonArray()},  
       {"outputWireNodes", JsonArray()}  
-    }));  
+    });  
+  
+    object->readStoredData(combinedData);
     object->setNetStates();
   } catch (std::exception const& e) {
     object.reset();
