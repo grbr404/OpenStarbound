@@ -415,19 +415,28 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       if (originalName == "perfectlygenericitem") {
         Logger::error("Could not re-instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject(originalName, originalParameters);
-        object->readStoredData(newStore);
+        object->readStoredData(JsonObject({  
+          {"orientationIndex", originalOrientationIndex},      
+          {"tilePosition", originalTilePosition},      
+          {"direction", originalDirection},    
+          {"inputWireNodes", JsonArray()},    
+          {"outputWireNodes", JsonArray()}  
+        }));  
         object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject("perfectlygenericitem", JsonObject({
-          {"genericObjectStorage", diskStore},
+          {"genericItemStorage", diskStore},
+          {"shortdescription", originalName},
+          {"description", "Reinstall the parent mod to return this object to normal"}
           {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
+          {"genericObjectStorage", diskStore},
           {"orientationIndex", originalOrientationIndex},  
           {"tilePosition", originalTilePosition},  
           {"direction", originalDirection},  
           {"inputWireNodes", JsonArray()},  
           {"outputWireNodes", JsonArray()},  
-          {"unbreakable", true}
+          {"ephemeral", true}
         }));  
 
         object->readStoredData(JsonObject({    
@@ -436,7 +445,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
           {"direction", originalDirection},  
           {"inputWireNodes", JsonArray()},  
           {"outputWireNodes", JsonArray()},  
-          {"unbreakable", true}
+          {"ephemeral", true}
         }));
         object->setNetStates();
       }
