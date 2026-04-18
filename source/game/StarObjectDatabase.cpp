@@ -396,6 +396,13 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       newStore = originalParameters.get("genericObjectStorage");
     object = createObject(newStore.getString("name"), newStore.get("parameters"));
     object->readStoredData(newStore);
+    object->readStoredData(JsonObject({  
+      {"orientationIndex", originalOrientationIndex},      
+      {"tilePosition", originalTilePosition},      
+      {"direction", originalDirection},    
+      {"inputWireNodes", JsonArray()},    
+      {"outputWireNodes", JsonArray()}  
+    }));  
     object->setNetStates();
   } catch (std::exception const& e) {
     object.reset();
