@@ -431,11 +431,6 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
           {"description", "Reinstall the parent mod to return this object to normal"},
           {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
           {"genericObjectStorage", diskStore},
-          {"orientationIndex", originalOrientationIndex},  
-          {"tilePosition", originalTilePosition},  
-          {"direction", originalDirection},  
-          {"inputWireNodes", JsonArray()},  
-          {"outputWireNodes", JsonArray()},  
           {"ephemeral", true}
         }));  
 
@@ -444,8 +439,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
           {"tilePosition", originalTilePosition},    
           {"direction", originalDirection},  
           {"inputWireNodes", JsonArray()},  
-          {"outputWireNodes", JsonArray()},  
-          {"ephemeral", true}
+          {"outputWireNodes", JsonArray()}
         }));
         object->setNetStates();
       }
