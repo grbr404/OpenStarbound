@@ -428,7 +428,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
         object = createObject("perfectlygenericitem", JsonObject({
           {"genericItemStorage", diskStore},
           {"shortdescription", originalName},
-          {"description", "Reinstall the parent mod to return this object to normal"}
+          {"description", "Reinstall the parent mod to return this object to normal"},
           {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
           {"genericObjectStorage", diskStore},
           {"orientationIndex", originalOrientationIndex},  
