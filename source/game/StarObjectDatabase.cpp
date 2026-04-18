@@ -386,11 +386,14 @@ ObjectPtr ObjectDatabase::createObject(String const& objectName, Json const& par
 ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   ObjectPtr object;
   auto originalName = diskStore.getString("name");
-  auto originalParams = diskStore.get("parameters");
+  auto originalParameters = diskStore.get("parameters");
+  auto originalOrientationIndex = diskStore.get("orientationIndex");
+  auto originalTilePosition = diskStore.get("tilePosition");
+  auto originalDirection = diskStore.getString("direction");
   Json newStore = diskStore;
   try {
-    if (originalName == "perfectlygenericitem" && originalParams.contains("genericItemStorage"))
-      newStore = diskStore.get("genericItemStorage");
+    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericObjectStorage"))
+      newStore = originalParameters.get("genericObjectStorage");
     object = createObject(newStore.getString("name"), newStore.get("parameters"));
     object->readStoredData(newStore);
     object->setNetStates();
@@ -408,19 +411,34 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       }
       return {};
     });
-
     if (!success) {
       if (originalName == "perfectlygenericitem") {
         Logger::error("Could not re-instantiate object '{}'. {}", diskStore, outputException(e, false));
-        object = createObject(originalName, originalParams);
+        object = createObject(originalName, originalParameters);
+        object->readStoredData(newStore);
+        object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
-        Json newParameters = JsonObject({
-          {"genericItemStorage", diskStore},
-          {"shortdescription", originalName},
-          {"description", "Reinstall the parent mod to return this item to normal"}
-        });
-        object = createObject("perfectlygenericitem", newParameters);
+        object = createObject("perfectlygenericitem", JsonObject({
+          {"genericObjectStorage", diskStore},
+          {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
+          {"orientationIndex", originalOrientationIndex},  
+          {"tilePosition", originalTilePosition},  
+          {"direction", originalDirection},  
+          {"inputWireNodes", JsonArray()},  
+          {"outputWireNodes", JsonArray()},  
+          {"ephemeral", true}
+        }));  
+
+        object->readStoredData(JsonObject({    
+          {"orientationIndex", originalOrientationIndex},    
+          {"tilePosition", originalTilePosition},    
+          {"direction", originalDirection},  
+          {"inputWireNodes", JsonArray()},  
+          {"outputWireNodes", JsonArray()},  
+          {"ephemeral", true}
+        }));
+        object->setNetStates();
       }
     }
   }
