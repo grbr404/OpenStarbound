@@ -435,11 +435,10 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject("perfectlygenericitem", JsonObject({
-          {"genericItemStorage", diskStore},
+          {"genericObjectStorage", diskStore},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod and place the object to return it to normal"},
           {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
-          {"genericObjectStorage", diskStore},
           {"ephemeral", true}
         }));  
 
