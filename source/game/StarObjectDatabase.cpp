@@ -427,7 +427,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
           {"direction", originalDirection},  
           {"inputWireNodes", JsonArray()},  
           {"outputWireNodes", JsonArray()},  
-          {"ephemeral", true}
+          {"unbreakable", true}
         }));  
 
         object->readStoredData(JsonObject({    
@@ -436,7 +436,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
           {"direction", originalDirection},  
           {"inputWireNodes", JsonArray()},  
           {"outputWireNodes", JsonArray()},  
-          {"ephemeral", true}
+          {"unbreakable", true}
         }));
         object->setNetStates();
       }
