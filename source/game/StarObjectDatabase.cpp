@@ -392,8 +392,8 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   auto originalDirection = diskStore.getString("direction");
   Json newStore = diskStore;
   try {
-    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericObjectStorage"))
-      newStore = originalParameters.get("genericObjectStorage");
+    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericItemStorage"))
+      newStore = originalParameters.get("genericItemStorage");
     object = createObject(newStore.getString("name"), newStore.get("parameters"));
       
     Json combinedData = newStore.setAll({  
@@ -435,7 +435,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject("perfectlygenericitem", JsonObject({
-          {"genericObjectStorage", diskStore},
+          {"genericItemStorage", diskStore},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod and place the object to return it to normal"},
           {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
