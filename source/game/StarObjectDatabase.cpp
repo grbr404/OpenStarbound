@@ -437,7 +437,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
         object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
-        Json combinedData = diskStore.erasePath("parameters.owner");
+        Json combinedData = diskStore.eraseKey("owner");
         object = createObject("perfectlygenericitem", JsonObject({
           {"owner", originalParameters.get("owner")},
           {"genericItemStorage", combinedData},
