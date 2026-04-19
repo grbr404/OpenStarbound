@@ -542,7 +542,9 @@ ItemPtr ItemDatabase::tryCreateItem(ItemDescriptor const& descriptor, Maybe<floa
           result = createItem(m_items.get("perfectlygenericitem").type, itemConfig("perfectlygenericitem", JsonObject({
             {"genericItemStorage", descriptor.withCount(1).toJson()},
             {"shortdescription", descriptor.name()},
-            {"description", "Reinstall the parent mod to return this item to normal"}
+            {"description", "Reinstall the parent mod to return this item to normal"},
+            {"inspectionDescription", "Reinstall the parent mod to return this item to normal"},
+            {"ephemeral", true}
           }), {}, {}));
           result->setCount(descriptor.count());
         }
