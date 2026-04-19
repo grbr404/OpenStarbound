@@ -387,7 +387,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   ObjectPtr object;
   auto originalName = diskStore.getString("name");
   auto originalParameters = diskStore.get("parameters");
-  auto originalOwner = originalParameters.get("owner");
+  auto originalOwner = originalParameters.opt("owner");
   auto originalOrientationIndex = diskStore.get("orientationIndex");
   auto originalTilePosition = diskStore.get("tilePosition");
   auto originalDirection = diskStore.getString("direction");
