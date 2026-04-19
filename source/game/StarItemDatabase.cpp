@@ -540,7 +540,7 @@ ItemPtr ItemDatabase::tryCreateItem(ItemDescriptor const& descriptor, Maybe<floa
         } else {
           Logger::error("Could not instantiate item '{}'. {}", descriptor, outputException(e, false));
           result = createItem(m_items.get("perfectlygenericitem").type, itemConfig("perfectlygenericitem", JsonObject({
-            {"genericItemStorage", descriptor.withCount(1).toJson()},
+            {"genericItemStorage", descriptor.eraseKey("count").toJson()},
             {"shortdescription", descriptor.name()},
             {"description", "Reinstall the parent mod to return this item to normal"},
             {"inspectionDescription", "Reinstall the parent mod to return this item to normal"},
