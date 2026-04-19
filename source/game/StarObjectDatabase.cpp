@@ -392,19 +392,22 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   auto originalDirection = diskStore.getString("direction");
   Json newStore = diskStore;
   try {
-    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericItemStorage"))
+    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericItemStorage")) {
       newStore = originalParameters.get("genericItemStorage");
-    object = createObject(newStore.getString("name"), newStore.get("parameters"));
-      
-    Json combinedData = newStore.setAll({  
-      {"orientationIndex", originalOrientationIndex},  
-      {"tilePosition", originalTilePosition},  
-      {"direction", originalDirection},  
-      {"inputWireNodes", JsonArray()},  
-      {"outputWireNodes", JsonArray()}  
-    });  
-  
-    object->readStoredData(combinedData);
+      Json combinedData = newStore.setAll({  
+        {"owner", originalParameters.get("owner")},    
+        {"orientationIndex", originalOrientationIndex},  
+        {"tilePosition", originalTilePosition},  
+        {"direction", originalDirection},  
+        {"inputWireNodes", JsonArray()},  
+        {"outputWireNodes", JsonArray()}  
+      });  
+      object = createObject(newStore.getString("name"), newStore.get("parameters"));
+      object->readStoredData(combinedData);
+    } else {
+      object = createObject(newStore.getString("name"), newStore.get("parameters"));
+      object->readStoredData(newStore);
+    }
     object->setNetStates();
   } catch (std::exception const& e) {
     object.reset();
@@ -434,15 +437,16 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
         object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
+        Json combinedData = diskStore.erasePath("parameters.owner");
         object = createObject("perfectlygenericitem", JsonObject({
-          {"genericItemStorage", diskStore},
+          {"genericItemStorage", combinedData},
           {"shortdescription", originalName},
-          {"description", "Reinstall the parent mod and place the object to return it to normal"},
-          {"inspectionDescription", "Reinstall the parent mod to return this object to normal"},
+          {"description", "Reinstall the parent mod to return this item to normal"},
+          {"inspectionDescription", "Reinstall the parent mod to return this item to normal"},
           {"ephemeral", true}
         }));  
-
-        object->readStoredData(JsonObject({    
+        object->readStoredData(JsonObject({   
+          {"owner", originalParameters.get("owner")},    
           {"orientationIndex", originalOrientationIndex},    
           {"tilePosition", originalTilePosition},    
           {"direction", originalDirection},  
