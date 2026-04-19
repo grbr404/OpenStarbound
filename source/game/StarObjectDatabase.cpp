@@ -427,30 +427,30 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       if (originalName == "perfectlygenericitem") {
         Logger::error("Could not re-instantiate object '{}'. {}", diskStore, outputException(e, false));
         object = createObject(originalName, originalParameters);
-        object->readStoredData(JsonObject({  
-          {"orientationIndex", originalOrientationIndex},      
-          {"tilePosition", originalTilePosition},      
-          {"direction", originalDirection},    
-          {"inputWireNodes", JsonArray()},    
-          {"outputWireNodes", JsonArray()}  
-        }));  
+        object->readStoredData(JsonObject({
+          {"orientationIndex", originalOrientationIndex},
+          {"tilePosition", originalTilePosition},
+          {"direction", originalDirection},
+          {"inputWireNodes", JsonArray()},
+          {"outputWireNodes", JsonArray()}
+        }));
         object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         Json combinedData = diskStore.erasePath("parameters.owner");
         object = createObject("perfectlygenericitem", JsonObject({
+          {"owner", originalParameters.get("owner")},
           {"genericItemStorage", combinedData},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod to return this item to normal"},
           {"inspectionDescription", "Reinstall the parent mod to return this item to normal"},
           {"ephemeral", true}
         }));  
-        object->readStoredData(JsonObject({   
-          {"owner", originalParameters.get("owner")},    
-          {"orientationIndex", originalOrientationIndex},    
-          {"tilePosition", originalTilePosition},    
-          {"direction", originalDirection},  
-          {"inputWireNodes", JsonArray()},  
+        object->readStoredData(JsonObject({
+          {"orientationIndex", originalOrientationIndex},
+          {"tilePosition", originalTilePosition},
+          {"direction", originalDirection},
+          {"inputWireNodes", JsonArray()},
           {"outputWireNodes", JsonArray()}
         }));
         object->setNetStates();
