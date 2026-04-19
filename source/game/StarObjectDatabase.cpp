@@ -387,6 +387,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   ObjectPtr object;
   auto originalName = diskStore.getString("name");
   auto originalParameters = diskStore.get("parameters");
+  auto originalOwner = originalParameters.get("owner");
   auto originalOrientationIndex = diskStore.get("orientationIndex");
   auto originalTilePosition = diskStore.get("tilePosition");
   auto originalDirection = diskStore.getString("direction");
@@ -395,7 +396,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
     if (originalName == "perfectlygenericitem" && originalParameters.contains("genericItemStorage")) {
       newStore = originalParameters.get("genericItemStorage");
       Json combinedData = newStore.setAll({  
-        {"owner", originalParameters.get("owner")},    
+        {"owner", originalOwner},    
         {"orientationIndex", originalOrientationIndex},  
         {"tilePosition", originalTilePosition},  
         {"direction", originalDirection},  
@@ -437,9 +438,9 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
         object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
-        Json combinedData = diskStore.eraseKey("owner");
+        Json combinedData = diskStore.erasePath("parameters.owner");
         object = createObject("perfectlygenericitem", JsonObject({
-          {"owner", originalParameters.get("owner")},
+          {"owner", originalOwner},
           {"genericItemStorage", combinedData},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod to return this item to normal"},
