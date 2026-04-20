@@ -441,7 +441,7 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         Json newParameters = JsonObject({
-          {"genericItemStorage", JsonObject({"name", originalName})},
+          {"genericItemStorage", JsonObject{{"name", originalName}}},
           {"genericObjectStorage", diskStore.erasePath("parameters.owner")},
           {"shortdescription", originalName},
           {"description", "Reinstall the parent mod to return this item to normal"},
