@@ -152,6 +152,10 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
     if (!terrestrialParameters)
       return {};
 
+    auto seed = celestialParameters.seed();  
+    RandomSource rand(seed);  
+    bool shouldSwap = rand.randBool();
+    
     auto gfxConfig = jsonMerge(assets->json("/celestial.config:terrestrialHorizonGraphics").get("default"),
         assets->json("/celestial.config:terrestrialHorizonGraphics").get(terrestrialParameters->typeName, JsonObject()));
 
@@ -176,6 +180,9 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
 
       String liquidBase = liquidTextures.replace("<liquid>", liquidsDatabase->liquidName(terrestrialParameters->primarySurfaceLiquid));
       res.append(getLR(liquidBase));
+      if (shouldSwap) {
+        std::swap(res.last().first, res.last().second);
+      }
 
       StringList planetMaskListL;
       StringList planetMaskListR;
@@ -194,23 +201,50 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
 
       auto toAppend = getLR(baseImages + biomeHueShift);
       res.append({toAppend.first + leftMask, toAppend.second + rightMask});
+      if (shouldSwap) {
+        std::swap(res.last().first, res.last().second);
+      }
     } else {
       res.append(getLR(baseImages + biomeHueShift));
+      if (shouldSwap) {
+        std::swap(res.last().first, res.last().second);
+      }
     }
 
     if (celestialParameters.getParameter("atmosphere", true).toBool())
       res.append(getLR(atmoTextures));
+      if (shouldSwap) {
+        std::swap(res.last().first, res.last().second);
+      }
 
     res.append(getLR(shadowTextures));
+    if (shouldSwap) {
+      std::swap(res.last().first, res.last().second);
+    }
 
   } else if (type == "Asteroids") {
+    auto seed = celestialParameters.seed();
+    RandomSource rand(seed);
+    bool shouldSwap = rand.randBool();
+
     res.append(getLR(assets->json("/celestial.config:asteroidsHorizons").toString()));
+    if (shouldSwap) {
+      std::swap(res.last().first, res.last().second);
+    }
 
   } else if (type == "FloatingDungeon") {
+    auto seed = celestialParameters.seed();
+    RandomSource rand(seed);
+    bool shouldSwap = rand.randBool();
+
     auto dungeonParameters = as<FloatingDungeonWorldParameters>(celestialParameters.visitableParameters());
     auto dungeonHorizons = assets->json("/celestial.config:floatingDungeonHorizons");
-    if (dungeonHorizons.contains(dungeonParameters->primaryDungeon))
+    if (dungeonHorizons.contains(dungeonParameters->primaryDungeon)) {
       res.append(getLR(dungeonHorizons.get(dungeonParameters->primaryDungeon).toString()));
+      if (shouldSwap) {
+        std::swap(res.last().first, res.last().second);
+      }
+    }
   }
 
   return res;
