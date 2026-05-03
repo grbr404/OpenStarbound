@@ -143,6 +143,9 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
     return pair<String, String>(base.replace("<selector>", "l"), base.replace("<selector>", "r"));
   };
 
+  String type = celestialParameters.getParameter("worldType").toString();
+  List<pair<String, String>> res;
+
   auto mirrorAndSwap = [&res](bool shouldSwap) {
     if (shouldSwap) {
       res.last().first += "?flipx";
@@ -150,9 +153,6 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
       std::swap(res.last().first, res.last().second);
     }
   };
-
-  String type = celestialParameters.getParameter("worldType").toString();
-  List<pair<String, String>> res;
 
   auto seed = celestialParameters.seed();
   RandomSource rand(seed);
