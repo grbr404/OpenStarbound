@@ -151,12 +151,14 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
       res.last().first += "?flipx";
       res.last().second += "?flipx";
       std::swap(res.last().first, res.last().second);
+      Logger::info("Applied mirrorAndSwap: {} -> {}", res.last().first, res.last().second); 
     }
   };
 
   auto seed = celestialParameters.seed();
   RandomSource rand(seed);
   bool shouldSwap = rand.randb();
+  Logger::info("shouldSwap: {}", shouldSwap);
 
   if (type == "Terrestrial") {
     auto terrestrialParameters = as<TerrestrialWorldParameters>(celestialParameters.visitableParameters());
