@@ -154,7 +154,7 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
 
     auto seed = celestialParameters.seed();  
     RandomSource rand(seed);  
-    bool shouldSwap = rand.randBool();
+    bool shouldSwap = rand.randb();
     
     auto gfxConfig = jsonMerge(assets->json("/celestial.config:terrestrialHorizonGraphics").get("default"),
         assets->json("/celestial.config:terrestrialHorizonGraphics").get(terrestrialParameters->typeName, JsonObject()));
@@ -211,11 +211,12 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
       }
     }
 
-    if (celestialParameters.getParameter("atmosphere", true).toBool())
+    if (celestialParameters.getParameter("atmosphere", true).toBool()) {
       res.append(getLR(atmoTextures));
       if (shouldSwap) {
         std::swap(res.last().first, res.last().second);
       }
+    }
 
     res.append(getLR(shadowTextures));
     if (shouldSwap) {
@@ -225,7 +226,7 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
   } else if (type == "Asteroids") {
     auto seed = celestialParameters.seed();
     RandomSource rand(seed);
-    bool shouldSwap = rand.randBool();
+    bool shouldSwap = rand.randb();
 
     res.append(getLR(assets->json("/celestial.config:asteroidsHorizons").toString()));
     if (shouldSwap) {
@@ -235,7 +236,7 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
   } else if (type == "FloatingDungeon") {
     auto seed = celestialParameters.seed();
     RandomSource rand(seed);
-    bool shouldSwap = rand.randBool();
+    bool shouldSwap = rand.randb();
 
     auto dungeonParameters = as<FloatingDungeonWorldParameters>(celestialParameters.visitableParameters());
     auto dungeonHorizons = assets->json("/celestial.config:floatingDungeonHorizons");
