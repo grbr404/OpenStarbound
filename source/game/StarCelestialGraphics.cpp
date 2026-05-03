@@ -143,22 +143,29 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
     return pair<String, String>(base.replace("<selector>", "l"), base.replace("<selector>", "r"));
   };
 
-  String type = celestialParameters.getParameter("worldType").toString();
+  auto mirrorAndSwap = [&res](bool shouldSwap) {
+    if (shouldSwap) {
+      res.last().first += "?flipx";
+      res.last().second += "?flipx";
+      std::swap(res.last().first, res.last().second);
+    }
+  };
 
+  String type = celestialParameters.getParameter("worldType").toString();
   List<pair<String, String>> res;
+
+  auto seed = celestialParameters.seed();
+  RandomSource rand(seed);
+  bool shouldSwap = rand.randb();
 
   if (type == "Terrestrial") {
     auto terrestrialParameters = as<TerrestrialWorldParameters>(celestialParameters.visitableParameters());
     if (!terrestrialParameters)
       return {};
-
-    auto seed = celestialParameters.seed();  
-    RandomSource rand(seed);  
-    bool shouldSwap = rand.randb();
-    
+      
     auto gfxConfig = jsonMerge(assets->json("/celestial.config:terrestrialHorizonGraphics").get("default"),
         assets->json("/celestial.config:terrestrialHorizonGraphics").get(terrestrialParameters->typeName, JsonObject()));
-
+      
     String baseImages = gfxConfig.getString("baseImages");
     String atmoTextures = gfxConfig.getString("atmosphereTextures");
     String shadowTextures = gfxConfig.getString("shadowTextures");
@@ -166,24 +173,19 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
     String liquidTextures = gfxConfig.getString("liquidTextures");
     auto numMasks = jsonToVec2I(gfxConfig.get("maskRange"));
     auto maskPerPlanetRange = jsonToVec2I(gfxConfig.get("maskPerPlanetRange"));
-
+      
     auto biomeHueShift = "?" + imageOperationToString(HueShiftImageOperation::hueShiftDegrees(terrestrialParameters->hueShift));
-
+      
     if (terrestrialParameters->primarySurfaceLiquid != EmptyLiquidId) {
-      auto seed = celestialParameters.seed();
-      RandomSource rand(seed);
-
       int numPlanetMasks = rand.randInt(maskPerPlanetRange[0], maskPerPlanetRange[1]);
       List<int> masks;
       for (int i = 0; i < numPlanetMasks; ++i)
         masks.append(rand.randInt(numMasks[0], numMasks[1]));
-
+          
       String liquidBase = liquidTextures.replace("<liquid>", liquidsDatabase->liquidName(terrestrialParameters->primarySurfaceLiquid));
       res.append(getLR(liquidBase));
-      if (shouldSwap) {
-        std::swap(res.last().first, res.last().second);
-      }
-
+      mirrorAndSwap(shouldSwap);
+          
       StringList planetMaskListL;
       StringList planetMaskListR;
       for (auto m : masks) {
@@ -192,59 +194,39 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
         planetMaskListL.append(lr.first);
         planetMaskListR.append(lr.second);
       }
-
+          
       String leftMask, rightMask;
       if (!planetMaskListL.empty())
         leftMask = "?" + imageOperationToString(AlphaMaskImageOperation{AlphaMaskImageOperation::Additive, planetMaskListL, {0, 0}});
       if (!planetMaskListR.empty())
         rightMask = "?" + imageOperationToString(AlphaMaskImageOperation{AlphaMaskImageOperation::Additive, planetMaskListR, {0, 0}});
-
+          
       auto toAppend = getLR(baseImages + biomeHueShift);
       res.append({toAppend.first + leftMask, toAppend.second + rightMask});
-      if (shouldSwap) {
-        std::swap(res.last().first, res.last().second);
-      }
+      mirrorAndSwap(shouldSwap);
     } else {
       res.append(getLR(baseImages + biomeHueShift));
-      if (shouldSwap) {
-        std::swap(res.last().first, res.last().second);
-      }
+      mirrorAndSwap(shouldSwap);
     }
-
+      
     if (celestialParameters.getParameter("atmosphere", true).toBool()) {
       res.append(getLR(atmoTextures));
-      if (shouldSwap) {
-        std::swap(res.last().first, res.last().second);
-      }
+      mirrorAndSwap(shouldSwap);
     }
-
+      
     res.append(getLR(shadowTextures));
-    if (shouldSwap) {
-      std::swap(res.last().first, res.last().second);
-    }
-
+    mirrorAndSwap(shouldSwap);
+      
   } else if (type == "Asteroids") {
-    auto seed = celestialParameters.seed();
-    RandomSource rand(seed);
-    bool shouldSwap = rand.randb();
-
     res.append(getLR(assets->json("/celestial.config:asteroidsHorizons").toString()));
-    if (shouldSwap) {
-      std::swap(res.last().first, res.last().second);
-    }
-
+    mirrorAndSwap(shouldSwap);
+    
   } else if (type == "FloatingDungeon") {
-    auto seed = celestialParameters.seed();
-    RandomSource rand(seed);
-    bool shouldSwap = rand.randb();
-
     auto dungeonParameters = as<FloatingDungeonWorldParameters>(celestialParameters.visitableParameters());
     auto dungeonHorizons = assets->json("/celestial.config:floatingDungeonHorizons");
     if (dungeonHorizons.contains(dungeonParameters->primaryDungeon)) {
       res.append(getLR(dungeonHorizons.get(dungeonParameters->primaryDungeon).toString()));
-      if (shouldSwap) {
-        std::swap(res.last().first, res.last().second);
-      }
+      mirrorAndSwap(shouldSwap);
     }
   }
 
