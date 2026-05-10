@@ -86,7 +86,8 @@ AchievementPtr StatisticsDatabase::readAchievement(String const& path) {
       config.getString("name"),
       jsonToStringList(config.get("triggers")),
       jsonToStringList(config.get("scripts")),
-      config
+      config,
+      config.getBool("isSteamAchievement", false)
     });
 }
 
