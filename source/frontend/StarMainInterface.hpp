@@ -184,6 +184,7 @@ private:
   JoinRequestDialogPtr m_joinRequestDialog;
   TeleportDialogPtr m_teleportDialog;
   QuestTrackerPanePtr m_questTracker;
+  ScriptPanePtr m_achievementsPane;
   ScriptPanePtr m_mmUpgrade;
   ScriptPanePtr m_collections;
   Map<EntityId, PanePtr> m_interactionScriptPanes;
