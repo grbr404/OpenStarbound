@@ -31,6 +31,7 @@ EnumMap<MainInterfacePanes> const MainInterfacePanesNames{
   {MainInterfacePanes::QuestTracker, "QuestTracker"},
   {MainInterfacePanes::MmUpgrade, "MmUpgrade"},
   {MainInterfacePanes::Collections, "Collections"},
+  {MainInterfacePanes::Achievements, "Achievements"},
   {MainInterfacePanes::CharacterSwap, "CharacterSwap"}
 };
 
