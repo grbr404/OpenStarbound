@@ -1053,6 +1053,10 @@ PanePtr MainInterface::createEscapeDialog() {
       escapeDialogPtr->dismiss();
       m_paneManager.displayRegisteredPane(MainInterfacePanes::Options);
     });
+  escapeDialogReader.registerCallback("showAchievements", [escapeDialogPtr, this](Widget*) {
+      escapeDialogPtr->dismiss();
+      m_paneManager.displayRegisteredPane(MainInterfacePanes::Achievements);
+    });
   escapeDialogReader.registerCallback("saveAndQuit", [escapeDialogPtr, this](Widget*) {
       m_state = ReturnToTitle;
       escapeDialogPtr->dismiss();
