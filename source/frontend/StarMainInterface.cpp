@@ -140,6 +140,9 @@ MainInterface::MainInterface(UniverseClientPtr client, WorldPainterPtr painter, 
   m_questTracker = make_shared<QuestTrackerPane>();
   m_paneManager.registerPane(MainInterfacePanes::QuestTracker, PaneLayer::Hud, m_questTracker);
 
+  m_achievementsPane = make_shared<ScriptPane>(m_client, "/interface/scripted/achievements/achievementsgui.config");
+  m_paneManager.registerPane(MainInterfacePanes::Achievements, PaneLayer::Window, m_achievementsPane);
+
   m_mmUpgrade = make_shared<ScriptPane>(m_client, Root::singleton().assets()->json("/interface.config:mainBar.mmUpgrade").getString("scriptPane", "/interface/scripted/mmupgrade/mmupgradegui.config"));
   m_paneManager.registerPane(MainInterfacePanes::MmUpgrade, PaneLayer::Window, m_mmUpgrade);
 
