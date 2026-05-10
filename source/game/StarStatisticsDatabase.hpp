@@ -21,6 +21,7 @@ struct Achievement {
   StringList triggers;
   StringList scripts;
   Json config;
+  bool isSteamAchievement = false;
 };
 
 class StatisticsDatabase {
