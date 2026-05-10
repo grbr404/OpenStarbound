@@ -175,12 +175,14 @@ void Statistics::readStatistics() {
 void Statistics::mergeServiceStatistics() {
   if (!m_service || !m_service->initialized() || m_service->error()) return;
 
+  auto statisticsDatabase = Root::singleton().statisticsDatabase();  
+
   // Publish achievements we unlocked when the platform service was unavailable.
   StringSet serviceAchievements = m_service->achievementsUnlocked();
-  for (String const& achievement : m_achievements.difference(serviceAchievements)) {
+  for (String const& achievementName : m_achievements.difference(serviceAchievements)) {
     auto achievement = statisticsDatabase->achievement(achievementName);
     if (achievement && achievement->isSteamAchievement)
-      m_service->unlockAchievement(achievement);
+      m_service->unlockAchievement(achievementName);
   }
   // Locally store all the achievements we unlocked in a different install:
   m_achievements.addAll(serviceAchievements);
