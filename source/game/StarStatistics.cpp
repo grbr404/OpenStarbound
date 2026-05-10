@@ -137,7 +137,9 @@ void Statistics::unlockAchievement(String const& name) {
   if (achievementUnlocked(name))
     return;
   m_achievements.add(name);
-  if (m_service)
+  auto statisticsDatabase = Root::singleton().statisticsDatabase();
+  auto achievement = statisticsDatabase->achievement(name);
+  if (m_service && achievement->isSteamAchievement)
     m_service->unlockAchievement(name);
   Logger::debug("Achievement get {}", name);
 }
