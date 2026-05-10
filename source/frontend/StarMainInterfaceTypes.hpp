@@ -36,6 +36,7 @@ enum class MainInterfacePanes {
   QuestTracker,
   MmUpgrade,
   Collections,
+  Achievements,
   CharacterSwap
 };
 
