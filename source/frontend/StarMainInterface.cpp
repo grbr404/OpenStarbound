@@ -217,7 +217,7 @@ MainInterfacePaneManager* MainInterface::paneManager() {
 }
 
 bool MainInterface::escapeDialogOpen() const {
-  return m_paneManager.registeredPaneIsDisplayed(MainInterfacePanes::EscapeDialog) || m_paneManager.registeredPaneIsDisplayed(MainInterfacePanes::Options);
+  return m_paneManager.registeredPaneIsDisplayed(MainInterfacePanes::EscapeDialog) || m_paneManager.registeredPaneIsDisplayed(MainInterfacePanes::Options) || m_paneManager.registeredPaneIsDisplayed(MainInterfacePanes::Achievements);
 }
 
 void MainInterface::openCraftingWindow(Json const& config, EntityId sourceEntityId) {
