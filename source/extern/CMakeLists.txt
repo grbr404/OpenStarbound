@@ -1,6 +1,5 @@
 INCLUDE_DIRECTORIES (
     ${STAR_EXTERN_INCLUDES}
-    fmt
     lua
   )
 
