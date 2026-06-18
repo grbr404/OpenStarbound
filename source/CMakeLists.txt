@@ -487,6 +487,8 @@ find_package(cpr CONFIG REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(zstd CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(xxhash CONFIG REQUIRED)
 if (NOT STAR_SYSTEM_HAIKU)
 	find_package(Opus CONFIG REQUIRED)
 	find_package(re2 CONFIG REQUIRED)
@@ -505,6 +507,8 @@ set(STAR_EXT_LIBS ${STAR_EXT_LIBS}
     $<IF:$<TARGET_EXISTS:Opus::opus>,Opus::opus,opus>
     $<IF:$<TARGET_EXISTS:re2::re2>,re2::re2,re2>
     imgui::imgui
+	fmt::fmt
+	xxHash::xxhash
     ${VORBISFILE_LIBRARY}
     ${VORBIS_LIBRARY}
     ${OGG_LIBRARY}
