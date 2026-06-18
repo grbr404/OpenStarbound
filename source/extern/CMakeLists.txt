@@ -9,13 +9,6 @@ SET (star_extern_HEADERS
     curve25519/include/ed25519_signature.h
     curve25519/include/external_calls.h
     imgui_iterator.inl
-    fmt/core.h
-    fmt/format.h
-    fmt/format-inl.h
-    fmt/ostream.h
-    fmt/printf.h
-    fmt/ranges.h
-    fmt/std.h
     fast_float.h
     imgui_lua_bindings.hpp
     lauxlib.h
@@ -24,7 +17,6 @@ SET (star_extern_HEADERS
     luaconf.h
     lualib.h
     tinyformat.h
-    xxhash.h
   )
 
 SET (star_extern_SOURCES
@@ -36,8 +28,6 @@ SET (star_extern_SOURCES
     curve25519/source/custom_blind.c
     curve25519/source/ed25519_sign.c
     curve25519/source/ed25519_verify.c
-    xxhash.c
-    fmt/format.cc
     imgui_lua_bindings.cpp
     lua/lapi.c
     lua/lauxlib.c
