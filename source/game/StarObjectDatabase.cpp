@@ -477,11 +477,23 @@ bool ObjectDatabase::canPlaceObject(World const* world, Vec2I const& position, S
 }
 
 ObjectPtr ObjectDatabase::createForPlacement(World const* world, String const& objectName, Vec2I const& position,
-    Direction direction, Json const& parameters) const {
-  if (!canPlaceObject(world, position, objectName))
+  Direction direction, Json const& parameters) const {
+  String actualObjectName = objectName;
+  Json actualParameters = parameters;
+    
+  if (objectName == "perfectlygenericitem" && parameters.contains("genericObjectStorage")) {
+    try {
+      Json storage = parameters.get("genericObjectStorage");
+      actualObjectName = storage.getString("name");
+      actualParameters = storage.get("parameters");
+    } catch (std::exception const& e) {
+      Logger::warn("Could not restore object from genericObjectStorage: {}", outputException(e, false));
+    }
+  }
+  if (!canPlaceObject(world, position, actualObjectName))
     return {};
 
-  ObjectPtr object = createObject(objectName, parameters);
+  ObjectPtr object = createObject(actualObjectName, actualParameters);
   object->setTilePosition(world->geometry().xwrap(position));
   object->setDirection(direction);
 
