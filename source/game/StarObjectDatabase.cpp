@@ -386,13 +386,31 @@ ObjectPtr ObjectDatabase::createObject(String const& objectName, Json const& par
 ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
   ObjectPtr object;
   auto originalName = diskStore.getString("name");
-  auto originalParams = diskStore.get("parameters");
+  auto originalParameters = diskStore.get("parameters");
+  auto originalOwner = originalParameters.opt("owner");
+  auto originalOrientationIndex = diskStore.get("orientationIndex");
+  auto originalTilePosition = diskStore.get("tilePosition");
+  auto originalDirection = diskStore.getString("direction");
   Json newStore = diskStore;
   try {
-    if (originalName == "perfectlygenericitem" && originalParams.contains("genericItemStorage"))
-      newStore = diskStore.get("genericItemStorage");
-    object = createObject(newStore.getString("name"), newStore.get("parameters"));
-    object->readStoredData(newStore);
+    if (originalName == "perfectlygenericitem" && originalParameters.contains("genericObjectStorage")) {
+      newStore = originalParameters.get("genericObjectStorage");
+      Json combinedData = newStore.setAll({  
+        {"orientationIndex", originalOrientationIndex},  
+        {"tilePosition", originalTilePosition},  
+        {"direction", originalDirection},  
+        {"inputWireNodes", JsonArray()},  
+        {"outputWireNodes", JsonArray()}  
+      });  
+      if (originalOwner) {  
+        combinedData = combinedData.set("owner", *originalOwner);
+      }  
+      object = createObject(newStore.getString("name"), newStore.get("parameters"));
+      object->readStoredData(combinedData);
+    } else {
+      object = createObject(newStore.getString("name"), newStore.get("parameters"));
+      object->readStoredData(newStore);
+    }
     object->setNetStates();
   } catch (std::exception const& e) {
     object.reset();
@@ -408,19 +426,38 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       }
       return {};
     });
-
     if (!success) {
       if (originalName == "perfectlygenericitem") {
         Logger::error("Could not re-instantiate object '{}'. {}", diskStore, outputException(e, false));
-        object = createObject(originalName, originalParams);
+        object = createObject(originalName, originalParameters);
+        object->readStoredData(JsonObject({
+          {"orientationIndex", originalOrientationIndex},
+          {"tilePosition", originalTilePosition},
+          {"direction", originalDirection},
+          {"inputWireNodes", JsonArray()},
+          {"outputWireNodes", JsonArray()}
+        }));
+        object->setNetStates();
       } else {
         Logger::error("Could not instantiate object '{}'. {}", diskStore, outputException(e, false));
         Json newParameters = JsonObject({
-          {"genericItemStorage", diskStore},
+          {"genericObjectStorage", diskStore.erasePath("parameters.owner")},
           {"shortdescription", originalName},
-          {"description", "Reinstall the parent mod to return this item to normal"}
+          {"description", "Reinstall the parent mod and place it to return this object to normal"},
+          {"inspectionDescription", "Reinstall the parent mod to return this object to normal"}
         });
+        if (originalOwner) {  
+          newParameters = newParameters.set("owner", *originalOwner);
+        }  
         object = createObject("perfectlygenericitem", newParameters);
+        object->readStoredData(JsonObject({
+          {"orientationIndex", originalOrientationIndex},
+          {"tilePosition", originalTilePosition},
+          {"direction", originalDirection},
+          {"inputWireNodes", JsonArray()},
+          {"outputWireNodes", JsonArray()}
+        }));
+        object->setNetStates();
       }
     }
   }
