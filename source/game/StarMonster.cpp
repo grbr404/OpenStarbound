@@ -409,7 +409,7 @@ void Monster::destroy(RenderCallback* renderCallback) {
       for (auto const& treasureItem : treasureDatabase->createTreasure(treasurePool, *m_monsterLevel))
         world()->addEntity(ItemDrop::createRandomizedDrop(treasureItem, position()));
     } catch (StarException const& e) {
-      Logger::warn("Invalid dropID in entity death. {}", outputException(e, false));
+      Logger::warn("Invalid dropID in monster death. {}", outputException(e, false));
     }
   }
 
