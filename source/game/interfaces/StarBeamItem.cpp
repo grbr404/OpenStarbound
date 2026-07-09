@@ -96,7 +96,7 @@ float BeamItem::getAngle(float angle) {
   if (m_beamCurve.dest().magnitudeSquared() < m_beamCurve.origin().magnitudeSquared()
       || m_beamCurve.origin() == m_beamCurve[1])
     return angle;
-  return getAngleSide(m_beamCurve[1].angle()).first;
+  return getAngleSide(m_beamCurve[1].angle() - owner()->movementController()->rotation()).first;
 }
 
 List<Drawable> BeamItem::drawables() const {
