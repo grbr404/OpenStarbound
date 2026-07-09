@@ -229,7 +229,7 @@ Maybe<Direction> ToolUser::setupHumanoidHandItems(Humanoid& humanoid, Vec2F posi
 
     ItemPtr handItem = primary ? m_primaryHandItem.get() : m_altHandItem.get();
 
-    auto angleSide = getAngleSide(m_user->world()->geometry().diff(aimPosition, position).angle());
+    auto angleSide = getAngleSide(m_user->world()->geometry().diff(aimPosition, position).angle() - m_user->movementController()->rotation());
 
     if (auto swingItem = as<SwingableItem>(handItem)) {
       float angle = swingItem->getAngleDir(angleSide.first, angleSide.second);
