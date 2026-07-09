@@ -1162,6 +1162,8 @@ void Player::update(float dt, uint64_t) {
          && !(primary && primary->instanceValue(disableFlag))
          && !(alt && alt->instanceValue(disableFlag))) {
           auto diff = world()->geometry().diff(aimPosition(), mouthPosition());
+          float bodyRotation = m_movementController->rotation();
+          diff = Vec2F(diff.x() * cosf(-bodyRotation) - diff.y() * sinf(-bodyRotation), diff.x() * sinf(-bodyRotation) + diff.y() * cosf(-bodyRotation));
           diff.setX(fabsf(diff.x()));
           headRotation = diff.angle() * .25f * numericalDirection(humanoid()->facingDirection());
         }
