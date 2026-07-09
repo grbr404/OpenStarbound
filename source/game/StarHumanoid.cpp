@@ -1442,9 +1442,9 @@ List<Drawable> Humanoid::render(bool withItems, bool withRotationAndScale) {
 
     if (withItems) {
       if (m_primaryHand.nonRotatedDrawables.size())
-        drawables.insertAllAt(0, m_primaryHand.nonRotatedDrawables);
+        nonRotatedDrawables.appendAll(m_primaryHand.nonRotatedDrawables);
       if (m_altHand.nonRotatedDrawables.size())
-        drawables.insertAllAt(0, m_altHand.nonRotatedDrawables);
+        nonRotatedDrawables.appendAll(m_altHand.nonRotatedDrawables);
     }
 
     for (auto& drawable : drawables) {
@@ -1457,6 +1457,16 @@ List<Drawable> Humanoid::render(bool withItems, bool withRotationAndScale) {
       }
       drawable.rebase();
     }
+    
+    for (auto& drawable : nonRotatedDrawables) {
+      drawable.translate(m_globalOffset);
+      if (withRotationAndScale) {
+        if (m_scale.x() != 1.f || m_scale.y() != 1.f)
+          drawable.scale(m_scale);
+      }
+      drawable.rebase();
+    }
+    drawables.insertAllAt(0, nonRotatedDrawables);
   }
 
   return drawables;
