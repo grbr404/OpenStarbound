@@ -243,10 +243,12 @@ Maybe<Direction> ToolUser::setupHumanoidHandItems(Humanoid& humanoid, Vec2F posi
       overrideFacingDirection = angleSide.second;
 
     } else if (auto activeItem = as<ActiveItem>(handItem)) {
-      setRotation(activeItem->holdingItem(), activeItem->armAngle(), activeItem->armAngle(),
+      float bodyRotation = m_user->movementController()->rotation();
+      float localArmAngle = activeItem->armAngle() - bodyRotation;
+      setRotation(activeItem->holdingItem(), localArmAngle, localArmAngle,
           activeItem->twoHandedGrip(), activeItem->recoil(), activeItem->outsideOfHand());
-      if (auto fd = activeItem->facingDirection())
-        overrideFacingDirection = *fd;
+      if (activeItem->facingDirection())
+       overrideFacingDirection = angleSide.second;
 
     } else if (auto beamItem = as<BeamItem>(handItem)) {
       float angle = beamItem->getAngle(angleSide.first);
