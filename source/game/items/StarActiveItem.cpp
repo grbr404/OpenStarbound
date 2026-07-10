@@ -376,8 +376,9 @@ LuaCallbacks ActiveItem::makeActiveItemCallbacks() {
       Vec2F handRotationCenter = owner()->armPosition(hand(), owner()->facingDirection(), 0.0f, Vec2F());
       Vec2F ownerPosition = owner()->position();
 
+      float bodyRotation = owner()->movementController()->rotation();
       // Vector in owner entity space to target.
-      Vec2F toTarget = owner()->world()->geometry().diff(targetPosition, ownerPosition);
+      Vec2F toTarget = owner()->world()->geometry().diff(targetPosition, ownerPosition).rotate(-bodyRotation);
       // Raptor - in retail if you have a hand rotation center that is to the right of the entity centerline, then any time the
       // aim position is behind it the character will repeatedly flip every single frame, we want to prevent this
       auto dir = numericalDirection(owner()->facingDirection());
@@ -409,7 +410,7 @@ LuaCallbacks ActiveItem::makeActiveItemCallbacks() {
       Vec2F toTarget = owner()->world()->geometry().diff(targetPosition, (ownerPosition + handRotationCenter));
       float toTargetDist = toTarget.magnitude();
       float angleAdjust = -std::asin(clamp(aimVerticalOffset / toTargetDist, -1.0f, 1.0f));
-      return toTarget.angle() + angleAdjust;
+      return toTarget.angle() - owner()->movementController()->rotation() + angleAdjust;
     });
 
   callbacks.registerCallback("setHoldingItem", [this](bool holdingItem) {
