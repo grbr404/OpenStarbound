@@ -330,7 +330,7 @@ RectF GuiContext::renderInterfaceText(String const& s, TextPositioning const& po
       position.pos * interfaceScale(),
       position.hAnchor,
       position.vAnchor,
-      position.wrapWidth.apply(bind(std::multiplies<int>(), _1, interfaceScale())),
+      position.wrapWidth.apply([this](unsigned w) { return (unsigned)std::round(w * interfaceScale()); }),
       position.charLimit
     });
   return RectF(res).scaled(1.0f / interfaceScale());
@@ -345,7 +345,7 @@ RectF GuiContext::determineInterfaceTextSize(String const& s, TextPositioning co
       positioning.pos * interfaceScale(),
       positioning.hAnchor,
       positioning.vAnchor,
-      positioning.wrapWidth.apply(bind(std::multiplies<int>(), _1, interfaceScale()))
+      positioning.wrapWidth.apply([this](unsigned w) { return (unsigned)std::round(w * interfaceScale()); })
     });
   return RectF(res).scaled(1.0f / interfaceScale());
 }
@@ -420,7 +420,7 @@ StringList GuiContext::wrapText(String const& s, Maybe<unsigned> wrapWidth) {
 
 StringList GuiContext::wrapInterfaceText(String const& s, Maybe<unsigned> wrapWidth) {
   if (wrapWidth)
-    *wrapWidth *= interfaceScale();
+    *wrapWidth = (unsigned)std::round(*wrapWidth * interfaceScale());
   return wrapText(s, wrapWidth);
 }
 
