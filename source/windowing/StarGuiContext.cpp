@@ -355,7 +355,7 @@ void GuiContext::setFontSize(unsigned size) {
 }
 
 void GuiContext::setFontSize(unsigned size, float pixelRatio) {
-  textPainter()->setFontSize(size * pixelRatio);
+  textPainter()->setFontSize((unsigned)std::round(size * pixelRatio));
 }
 
 void GuiContext::setFontColor(Vec4B const& color) {
@@ -380,7 +380,7 @@ void GuiContext::setDefaultFont() {
 
 TextStyle& GuiContext::setTextStyle(TextStyle const& textStyle, float pixelRatio) {
   TextStyle& setStyle = textPainter()->setTextStyle(textStyle);
-  setStyle.fontSize *= pixelRatio;
+  setStyle.fontSize = (unsigned)std::round(setStyle.fontSize * pixelRatio);
   return setStyle;
 }
 
@@ -409,7 +409,7 @@ int GuiContext::stringInterfaceWidth(String const& s) {
   if (interfaceScale() != 0) {
     // font size is already adjusted UP by interfaceScale, so we have to adjust
     // it back down
-    return stringWidth(s) / interfaceScale();
+    return (int)std::round(stringWidth(s) / interfaceScale());
   }
   return 0;
 }
