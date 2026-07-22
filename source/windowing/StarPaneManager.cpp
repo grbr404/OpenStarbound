@@ -277,9 +277,13 @@ void PaneManager::render() {
   for (auto const& layerPair : reverseIterate(m_displayedPanes)) {
     for (auto const& panePair : reverseIterate(layerPair.second)) {
       if (panePair.first->active()) {
-        if (m_prevInterfaceScale != m_context->interfaceScale())
-          panePair.first->setPosition(
-              calculateNewInterfacePosition(panePair.first, (float)m_context->interfaceScale() / m_prevInterfaceScale));
+        if (m_prevInterfaceScale != m_context->interfaceScale()) {
+          Vec2I newPos = calculateNewInterfacePosition(panePair.first,
+            (float)m_context->interfaceScale() / m_prevInterfaceScale);
+          if (panePair.first->anchor() == PaneAnchor::None)
+            newPos = newPos.piecewiseClamp(Vec2I(0, 0), windowSize() - panePair.first->size());
+          panePair.first->setPosition(newPos);
+        }
 
         panePair.first->setDrawingOffset(calculatePaneOffset(panePair.first));
         panePair.first->render(RectI(Vec2I(), windowSize()));
