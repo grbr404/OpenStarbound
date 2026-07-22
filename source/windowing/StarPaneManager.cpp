@@ -388,7 +388,7 @@ Vec2I PaneManager::calculateNewInterfacePosition(PanePtr const& pane, float inte
   Mat3F scale;
   switch (pane->anchor()) {
     case PaneAnchor::None:
-      scale = Mat3F::scaling(interfaceScaleRatio, Vec2F(windowSize()) / 2);
+      scale = Mat3F::scaling(1.0f / interfaceScaleRatio);
       break;
     case PaneAnchor::BottomLeft:
       scale = Mat3F::scaling(interfaceScaleRatio);
@@ -418,7 +418,7 @@ Vec2I PaneManager::calculateNewInterfacePosition(PanePtr const& pane, float inte
       scale = Mat3F::scaling(interfaceScaleRatio, size / 2);
       break;
     default:
-      scale = Mat3F::scaling(interfaceScaleRatio, Vec2F(windowSize()) / 2);
+      scale = Mat3F::scaling(1.0f / interfaceScaleRatio);
   }
   return Vec2I::round((scale * Vec3F(position, 0)).vec2());
 }
