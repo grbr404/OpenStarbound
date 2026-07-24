@@ -204,6 +204,9 @@ bool PaneManager::sendInputEvent(InputEvent const& event) {
       for (auto const& panePair : layerPair.second) {
         if (panePair.first->dragActive()) {
           panePair.first->drag(*m_context->mousePosition(event));
+          auto pos = panePair.first->relativePosition();
+          panePair.first->setPosition(
+            pos.piecewiseClamp(Vec2I(0, 0), windowSize() - panePair.first->size()));
           return true;
         }
       }
