@@ -26,11 +26,12 @@ void PaneManager::displayPane(PaneLayer paneLayer, PanePtr const& pane, DismissC
   if (!m_displayedPanes[paneLayer].insertFront(pane, std::move(onDismiss)).second)
     throw GuiException("Pane displayed twice in PaneManager::displayPane");
 
-  if (pane->anchor() == PaneAnchor::None) {
-    if (!pane->hasDisplayed())
+  if (!pane->hasDisplayed()) {
+    if (pane->anchor() == PaneAnchor::None)
       pane->setPosition(Vec2I((windowSize() - pane->size()) / 2) + pane->centerOffset());
-    else
-      pane->setPosition(pane->relativePosition().piecewiseClamp(Vec2I(0, 0), windowSize() - pane->size()));
+  } else {
+    auto offset = calculatePaneOffset(pane);
+    pane->setPosition(pane->relativePosition().piecewiseClamp(-offset, windowSize() - pane->size() - offset));
   }
 
   pane->displayed();
@@ -287,10 +288,9 @@ void PaneManager::render() {
     for (auto const& panePair : reverseIterate(layerPair.second)) {
       if (panePair.first->active()) {
         if (m_prevInterfaceScale != m_context->interfaceScale()) {
-          Vec2I newPos = calculateNewInterfacePosition(panePair.first,
-            (float)m_context->interfaceScale() / m_prevInterfaceScale);
-          if (panePair.first->anchor() == PaneAnchor::None)
-            newPos = newPos.piecewiseClamp(Vec2I(0, 0), windowSize() - panePair.first->size());
+          Vec2I newPos = calculateNewInterfacePosition(panePair.first, (float)m_context->interfaceScale() / m_prevInterfaceScale);
+          auto offset = calculatePaneOffset(panePair.first);
+          newPos = newPos.piecewiseClamp(-offset, windowSize() - panePair.first->size() - offset);
           panePair.first->setPosition(newPos);
         }
 
@@ -395,45 +395,8 @@ Vec2I PaneManager::calculatePaneOffset(PanePtr const& pane) const {
   }
 }
 
-Vec2I PaneManager::calculateNewInterfacePosition(PanePtr const& pane, float interfaceScaleRatio) const {
-  Vec2F position(pane->relativePosition());
-  Vec2F size(pane->size());
-  Mat3F scale;
-  switch (pane->anchor()) {
-    case PaneAnchor::None:
-      scale = Mat3F::scaling(1.0f / interfaceScaleRatio);
-      break;
-    case PaneAnchor::BottomLeft:
-      scale = Mat3F::scaling(interfaceScaleRatio);
-      break;
-    case PaneAnchor::BottomRight:
-      scale = Mat3F::scaling(interfaceScaleRatio, {size[0], 0});
-      break;
-    case PaneAnchor::TopLeft:
-      scale = Mat3F::scaling(interfaceScaleRatio, {0, size[1]});
-      break;
-    case PaneAnchor::TopRight:
-      scale = Mat3F::scaling(interfaceScaleRatio, size);
-      break;
-    case PaneAnchor::CenterTop:
-      scale = Mat3F::scaling(interfaceScaleRatio, {size[0] / 2, size[1]});
-      break;
-    case PaneAnchor::CenterBottom:
-      scale = Mat3F::scaling(interfaceScaleRatio, {size[0] / 2, 0});
-      break;
-    case PaneAnchor::CenterLeft:
-      scale = Mat3F::scaling(interfaceScaleRatio, {0, size[1] / 2});
-      break;
-    case PaneAnchor::CenterRight:
-      scale = Mat3F::scaling(interfaceScaleRatio, {size[0], size[1] / 2});
-      break;
-    case PaneAnchor::Center:
-      scale = Mat3F::scaling(interfaceScaleRatio, size / 2);
-      break;
-    default:
-      scale = Mat3F::scaling(1.0f / interfaceScaleRatio);
-  }
-  return Vec2I::round((scale * Vec3F(position, 0)).vec2());
+Vec2I PaneManager::calculateNewInterfacePosition(PanePtr const& pane, float interfaceScaleRatio) const {  
+  return Vec2I::round(Vec2F(pane->relativePosition()) / interfaceScaleRatio);  
 }
 
 bool PaneManager::dismiss(PanePtr const& pane) {
