@@ -26,8 +26,12 @@ void PaneManager::displayPane(PaneLayer paneLayer, PanePtr const& pane, DismissC
   if (!m_displayedPanes[paneLayer].insertFront(pane, std::move(onDismiss)).second)
     throw GuiException("Pane displayed twice in PaneManager::displayPane");
 
-  if (!pane->hasDisplayed() && pane->anchor() == PaneAnchor::None)
-    pane->setPosition(Vec2I((windowSize() - pane->size()) / 2) + pane->centerOffset()); // center it
+  if (pane->anchor() == PaneAnchor::None) {
+    if (!pane->hasDisplayed())
+      pane->setPosition(Vec2I((windowSize() - pane->size()) / 2) + pane->centerOffset());
+    else
+      pane->setPosition(pane->relativePosition().piecewiseClamp(Vec2I(0, 0), windowSize() - pane->size()));
+  }
 
   pane->displayed();
 }
