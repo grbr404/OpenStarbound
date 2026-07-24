@@ -205,8 +205,10 @@ bool PaneManager::sendInputEvent(InputEvent const& event) {
         if (panePair.first->dragActive()) {
           panePair.first->drag(*m_context->mousePosition(event));
           auto pos = panePair.first->relativePosition();
+          auto size = panePair.first->size();
+          auto offset = calculatePaneOffset(panePair.first);
           panePair.first->setPosition(
-            pos.piecewiseClamp(Vec2I(0, 0), windowSize() - panePair.first->size()));
+            pos.piecewiseClamp(-offset, windowSize() - size - offset));
           return true;
         }
       }
