@@ -147,6 +147,9 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
 
   List<pair<String, String>> res;
 
+  RandomSource flipRand(celestialParameters.seed());
+  bool flipHorizon = flipRand.randb();
+
   if (type == "Terrestrial") {
     auto terrestrialParameters = as<TerrestrialWorldParameters>(celestialParameters.visitableParameters());
     if (!terrestrialParameters)
@@ -211,6 +214,14 @@ List<pair<String, String>> CelestialGraphics::worldHorizonImages(CelestialParame
     auto dungeonHorizons = assets->json("/celestial.config:floatingDungeonHorizons");
     if (dungeonHorizons.contains(dungeonParameters->primaryDungeon))
       res.append(getLR(dungeonHorizons.get(dungeonParameters->primaryDungeon).toString()));
+  }
+
+  if (flipHorizon) {
+    for (auto& layer : res) {
+      std::swap(layer.first, layer.second);
+      layer.first  += "?flipx";
+      layer.second += "?flipx";
+    }
   }
 
   return res;
