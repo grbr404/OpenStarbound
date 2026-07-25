@@ -2424,6 +2424,15 @@ Maybe<WorkerPoolPromise<WorldServerThreadPtr>> UniverseServer::instanceWorldProm
     worldParameters->disableDeathDrops = worldConfig.getBool("disableDeathDrops", false);
 
     SkyParameters skyParameters = SkyParameters(worldConfig.get("skyParameters", Json()));
+
+    if (Random::randb()) {
+      for (auto& layer : skyParameters.horizonImages) {
+        std::swap(layer.first, layer.second);
+        layer.first  += "?flipx";
+        layer.second += "?flipx";
+      }
+    }
+
     auto worldTemplate = make_shared<WorldTemplate>(worldParameters, skyParameters, worldSeed);
     Json worldProperties = worldConfig.get("worldProperties", JsonObject{});
     bool spawningEnabled = worldConfig.getBool("spawningEnabled", true);
