@@ -93,17 +93,17 @@ public:
   // Returns true if the hardware cursor was successfully set to the drawable. Generally fails if the Drawable isn't an image part or the image is too big.
   bool trySetCursor(Drawable const& drawable, Vec2I const& offset, int pixelRatio);
 
-  RectF renderText(String const& s, TextPositioning const& positioning);
-  RectF renderInterfaceText(String const& s, TextPositioning const& positioning);
+  RectF renderText(StringView s, TextPositioning const& positioning);
+  RectF renderInterfaceText(StringView s, TextPositioning const& positioning);
 
-  RectF determineTextSize(String const& s, TextPositioning const& positioning);
-  RectF determineInterfaceTextSize(String const& s, TextPositioning const& positioning);
+  RectF determineTextSize(StringView s, TextPositioning const& positioning);
+  RectF determineInterfaceTextSize(StringView s, TextPositioning const& positioning);
 
   void setFontSize(unsigned size);
   void setFontSize(unsigned size, float pixelRatio);
   void setFontColor(Vec4B const& color);
   void setFontMode(FontMode mode);
-  void setFontProcessingDirectives(String const& directives);
+  void setFontProcessingDirectives(StringView directives);
   void setFont(String const& font);
   void setDefaultFont();
   TextStyle& setTextStyle(TextStyle const& textStyle, float pixelRatio);
@@ -116,8 +116,8 @@ public:
   int stringWidth(StringView s);
   int stringInterfaceWidth(StringView s);
 
-  StringList wrapText(String const& s, Maybe<unsigned> wrapWidth);
-  StringList wrapInterfaceText(String const& s, Maybe<unsigned> wrapWidth);
+  StringList wrapText(StringView s, Maybe<unsigned> wrapWidth);
+  StringList wrapInterfaceText(StringView s, Maybe<unsigned> wrapWidth);
 
   void playAudio(AudioInstancePtr audioInstance);
   AudioInstancePtr playAudio(String const& audioAsset, int loops = 0, float volume = 1.0f, float pitch = 1.0f);
