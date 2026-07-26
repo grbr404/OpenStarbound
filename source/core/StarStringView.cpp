@@ -298,36 +298,39 @@ size_t StringView::findFirstNotOf(StringView pattern, size_t beg) const {
 }
 
 size_t StringView::findNextBoundary(size_t index, bool backwards) const {
-  //TODO: Make this faster.
-  size_t mySize = size();
-  starAssert(index <= mySize);
-  if (!backwards && (index == mySize))
-    return index;
+  auto it = begin();
+  auto itEnd = end();
+
+  size_t pos = 0;
+  while (pos < index && it != itEnd) { ++it; ++pos; }
+  starAssert(pos == index);
+
   if (backwards) {
-    if (index == 0)
-      return 0;
-    index--;
+    if (it == begin()) return 0;
+    --it;
+    --index;
+  } else {
+    if (it == itEnd) return index;
   }
-  Char c = this->at(index);
+
+  Char c = *it;
+
   while (!String::isSpace(c)) {
-    if (backwards && (index == 0))
-      return 0;
-    index += backwards ? -1 : 1;
-    if (index == mySize)
-      return mySize;
-    c = this->at(index);
+    if (backwards && it == begin()) return 0;
+    backwards ? --it : ++it;
+    backwards ? --index : ++index;
+    if (it == itEnd) return index;
+    c = *it;
   }
   while (String::isSpace(c)) {
-    if (backwards && (index == 0))
-      return 0;
-    index += backwards ? -1 : 1;
-    if (index == mySize)
-      return mySize;
-    c = this->at(index);
+    if (backwards && it == begin()) return 0;
+    backwards ? --it : ++it;
+    backwards ? --index : ++index;
+    if (it == itEnd) return index;
+    c = *it;
   }
-  if (backwards && !(index == mySize))
-    return index + 1;
-  return index;
+
+  return backwards ? index + 1 : index;
 }
 
 bool StringView::contains(StringView s, CaseSensitivity cs) const {
