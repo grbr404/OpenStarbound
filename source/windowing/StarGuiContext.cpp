@@ -321,11 +321,11 @@ bool GuiContext::trySetCursor(Drawable const& drawable, Vec2I const& offset, int
   return applicationController()->setCursorImage(AssetPath::join(imagePath), assets->image(imagePath), pixelRatio, offset);
 }
 
-RectF GuiContext::renderText(String const& s, TextPositioning const& position) {
+RectF GuiContext::renderText(StringView s, TextPositioning const& position) {
   return textPainter()->renderText(s, position);
 }
 
-RectF GuiContext::renderInterfaceText(String const& s, TextPositioning const& position) {
+RectF GuiContext::renderInterfaceText(StringView s, TextPositioning const& position) {
   auto res = renderText(s, {
       position.pos * interfaceScale(),
       position.hAnchor,
@@ -336,11 +336,11 @@ RectF GuiContext::renderInterfaceText(String const& s, TextPositioning const& po
   return RectF(res).scaled(1.0f / interfaceScale());
 }
 
-RectF GuiContext::determineTextSize(String const& s, TextPositioning const& positioning) {
+RectF GuiContext::determineTextSize(StringView s, TextPositioning const& positioning) {
   return textPainter()->determineTextSize(s, positioning);
 }
 
-RectF GuiContext::determineInterfaceTextSize(String const& s, TextPositioning const& positioning) {
+RectF GuiContext::determineInterfaceTextSize(StringView s, TextPositioning const& positioning) {
   auto res = determineTextSize(s, {
       positioning.pos * interfaceScale(),
       positioning.hAnchor,
@@ -366,7 +366,7 @@ void GuiContext::setFontMode(FontMode mode) {
   textPainter()->setMode(mode);
 }
 
-void GuiContext::setFontProcessingDirectives(String const& directives) {
+void GuiContext::setFontProcessingDirectives(StringView directives) {
   textPainter()->setProcessingDirectives(directives);
 }
 
@@ -400,25 +400,22 @@ void GuiContext::setDefaultLineSpacing() {
   textPainter()->setLineSpacing(DefaultLineSpacing);
 }
 
-int GuiContext::stringWidth(String const& s) {
+int GuiContext::stringWidth(StringView s) {
   return textPainter()->stringWidth(s);
 }
 
-//TODO: Make this use StringView
-int GuiContext::stringInterfaceWidth(String const& s) {
-  if (interfaceScale() != 0) {
-    // font size is already adjusted UP by interfaceScale, so we have to adjust
-    // it back down
+int GuiContext::stringInterfaceWidth(StringView s) {
+  if (interfaceScale()) {
     return stringWidth(s) / interfaceScale();
   }
   return 0;
 }
 
-StringList GuiContext::wrapText(String const& s, Maybe<unsigned> wrapWidth) {
+StringList GuiContext::wrapText(StringView s, Maybe<unsigned> wrapWidth) {
   return textPainter()->wrapText(s, wrapWidth);
 }
 
-StringList GuiContext::wrapInterfaceText(String const& s, Maybe<unsigned> wrapWidth) {
+StringList GuiContext::wrapInterfaceText(StringView s, Maybe<unsigned> wrapWidth) {
   if (wrapWidth)
     *wrapWidth *= interfaceScale();
   return wrapText(s, wrapWidth);
