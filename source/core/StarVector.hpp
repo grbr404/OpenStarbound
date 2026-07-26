@@ -636,8 +636,9 @@ auto Vector<T, N>::withAngle(T angle, T magnitude) -> Enable2D<P, Vector<T, N>> 
 template <typename T, size_t N>
 template <size_t P>
 auto Vector<T, N>::angleBetween2(Vector const& v1, Vector const& v2) -> Enable2D<P, T> {
-  // TODO: Inefficient
-  return v2.angle() - v1.angle();
+  T cross = v1[0] * v2[1] - v1[1] * v2[0];
+  T dot   = v1[0] * v2[0] + v1[1] * v2[1];
+  return std::atan2(cross, dot);
 }
 
 template <typename T, size_t N>
