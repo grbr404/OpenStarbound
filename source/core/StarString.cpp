@@ -590,34 +590,39 @@ size_t String::findFirstNotOf(String const& pattern, size_t beg) const {
 }
 
 size_t String::findNextBoundary(size_t index, bool backwards) const {
-  starAssert(index <= size());
-  if (!backwards && (index == size()))
-    return index;
+  auto it = begin();
+  auto itEnd = end();
+
+  size_t pos = 0;
+  while (pos < index && it != itEnd) { ++it; ++pos; }
+  starAssert(pos == index);
+
   if (backwards) {
-    if (index == 0)
-      return 0;
-    index--;
+    if (it == begin()) return 0;
+    --it;
+    --index;
+  } else {
+    if (it == itEnd) return index;
   }
-  Char c = this->at(index);
+
+  Char c = *it;
+
   while (!isSpace(c)) {
-    if (backwards && (index == 0))
-      return 0;
-    index += backwards ? -1 : 1;
-    if (index == size())
-      return size();
-    c = this->at(index);
+    if (backwards && it == begin()) return 0;
+    backwards ? --it : ++it;
+    backwards ? --index : ++index;
+    if (it == itEnd) return index;
+    c = *it;
   }
   while (isSpace(c)) {
-    if (backwards && (index == 0))
-      return 0;
-    index += backwards ? -1 : 1;
-    if (index == size())
-      return size();
-    c = this->at(index);
+    if (backwards && it == begin()) return 0;
+    backwards ? --it : ++it;
+    backwards ? --index : ++index;
+    if (it == itEnd) return index;
+    c = *it;
   }
-  if (backwards && !(index == size()))
-    return index + 1;
-  return index;
+
+  return backwards ? index + 1 : index;
 }
 
 String String::slice(SliceIndex a, SliceIndex b, int i) const {
