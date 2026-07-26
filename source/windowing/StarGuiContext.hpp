@@ -113,8 +113,8 @@ public:
   void setLineSpacing(float lineSpacing);
   void setDefaultLineSpacing();
 
-  int stringWidth(String const& s);
-  int stringInterfaceWidth(String const& s);
+  int stringWidth(StringView s);
+  int stringInterfaceWidth(StringView s);
 
   StringList wrapText(String const& s, Maybe<unsigned> wrapWidth);
   StringList wrapInterfaceText(String const& s, Maybe<unsigned> wrapWidth);
