@@ -581,7 +581,11 @@ public:
     Logger::info("Application: Creating SDL OpenGL context");
     static const std::pair<int,int> versions[] = {{4,6},{4,5},{4,4},{4,3},{4,2},{4,1},{4,0},{3,3},{3,2}};
     for (auto& [majorVersion, minorVersion] : versions) {
+#ifdef STAR_SYSTEM_MACOS
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+#else
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+#endif
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, majorVersion);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minorVersion);
