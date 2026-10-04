@@ -342,6 +342,14 @@ void OpenGlRenderer::loadConfig(Json const& config) {
     auto tex = createGlTexture(textureAddressing,textureFiltering,initialSize);
     m_textures[pair.first] = tex;
   }
+
+  for (auto& effectPair : m_effects) {
+    for (auto& texturePair : effectPair.second.textures) {
+      if (auto tex = m_textures.ptr(texturePair.first))
+        texturePair.second.textureValue = *tex;
+    }
+  }
+
   setScreenSize(m_screenSize);
   m_config = config;
 }
@@ -1368,7 +1376,7 @@ void OpenGlRenderer::setupGlUniforms(Effect& effect, Vec2U screenSize) {
   for (auto& p : effect.textures) {
     // update texture sizes in case the texture was changed when the effect was inactive
     auto ptr = &p.second;
-    if (ptr->textureSizeUniform != -1) {
+    if (ptr->textureSizeUniform != -1 && ptr->textureValue) {
       auto textureSize = ptr->textureValue->glTextureSize();
       glUniform2f(ptr->textureSizeUniform, textureSize[0], textureSize[1]);
     }
