@@ -499,9 +499,9 @@ void MainInterface::handleInteractAction(InteractAction interactAction) {
 
           currentLocation = TeleportBookmark {
             {m_client->playerWorld(), SpawnTargetUniqueEntity(*uniqueEntityId)},
-            planetName,
+            config.getString("bookmarkPlanetName", planetName),
             config.getString("bookmarkName", ""),
-            icon
+            config.getString("bookmarkIcon", icon)
           };
 
           if (!m_client->mainPlayer()->universeMap()->teleportBookmarks().contains(currentLocation) || !config.getBool("canTeleport", true)) {
