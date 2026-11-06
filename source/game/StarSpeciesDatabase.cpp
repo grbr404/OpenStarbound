@@ -287,11 +287,11 @@ String SpeciesDefinition::kind() const {
 }
 
 String SpeciesDefinition::nameGen(Gender gender) const {
-  return m_nameGen[(unsigned)gender];
+  return m_nameGen.get((unsigned)gender);
 }
 
 String SpeciesDefinition::ouchNoise(Gender gender) const {
-  return m_ouchNoises[(unsigned)gender];
+  return m_ouchNoises.get((unsigned)gender);
 }
 
 SpeciesOption const& SpeciesDefinition::options() const {
