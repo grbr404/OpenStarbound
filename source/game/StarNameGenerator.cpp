@@ -39,6 +39,8 @@ String PatternedNameGenerator::generateName(String const& rulesAsset, uint64_t s
 }
 
 String PatternedNameGenerator::generateName(String const& rulesAsset, RandomSource& random) const {
+  if (rulesAsset.empty())
+    return "";
   auto assets = Root::singleton().assets();
   auto rules = assets->json(rulesAsset).toArray();
   String res = "";
