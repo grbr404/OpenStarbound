@@ -32,6 +32,7 @@ private:
 
   uint64_t m_appId;
   bool m_initialized;
+  StringSet m_knownAchievements;
   Maybe<String> m_error;
 };
 
