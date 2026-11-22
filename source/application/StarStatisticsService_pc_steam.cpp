@@ -51,6 +51,10 @@ bool SteamStatisticsService::reportEvent(String const&, Json const&) {
 }
 
 bool SteamStatisticsService::unlockAchievement(String const& name) {
+  if (m_initialized && !m_knownAchievements.contains(name)) {
+    Logger::debug("Skipping non Steam achievement {}", name);
+    return false;
+  }
   if (!SteamUserStats()->SetAchievement(name.utf8Ptr())) {
     Logger::error("Cannot set Steam achievement {}", name);
     return false;
@@ -68,7 +72,7 @@ StringSet SteamStatisticsService::achievementsUnlocked() const {
       achievements.add(achievement);
     }
   }
-  return {};
+  return achievements;
 }
 
 void SteamStatisticsService::refresh() {
@@ -100,6 +104,11 @@ void SteamStatisticsService::onUserStatsReceived(UserStatsReceived_t* callback) 
 
   Logger::debug("Steam RequestCurrentStats successful");
   m_initialized = true;
+
+  uint32_t count = SteamUserStats()->GetNumAchievements();
+  m_knownAchievements.reserve(count);
+  for (uint32_t i = 0; i < count; ++i)
+    m_knownAchievements.add(SteamUserStats()->GetAchievementName(i));
 }
 
 void SteamStatisticsService::onUserStatsStored(UserStatsStored_t* callback) {
