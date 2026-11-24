@@ -3,6 +3,21 @@
 
 namespace Star {
 
+static StringSet const SteamAchievementNames = {
+  "findbike", "floranmission", "harvestcrop", "penguincrew", "craftarmor",
+  "collectionaf", "preparefood", "catchallbugs", "collectcodex", "findpgi",
+  "killmotherpoptop", "gaintenant", "hylotlmission", "crampedcolony",
+  "killplayer", "restorefossil", "uniquetenants", "killdreadwing",
+  "50tenantquests", "maxcrew", "killrobotchicken", "completequest",
+  "findbug", "cookallfood", "findinstrument", "findaugment", "killinnocent",
+  "museum", "findoutpost", "10tenantquests", "craftallarmors", "mazebound",
+  "findalpaca", "apexmission", "protectorate", "25tenantquests",
+  "planetblocks", "findallfossils", "destroyruin", "collectallfruit",
+  "capturemonster", "everyspeciescrew", "killshockhopper", "gaincrew",
+  "killbirds", "glitchmission", "floranarena", "findlore", "largecolony",
+  "lunarbasemission", "avianmission"
+};
+
 SteamStatisticsService::SteamStatisticsService(PcPlatformServicesStatePtr)
 : m_callbackUserStatsReceived(this, &SteamStatisticsService::onUserStatsReceived),
   m_callbackUserStatsStored(this, &SteamStatisticsService::onUserStatsStored),
@@ -51,6 +66,10 @@ bool SteamStatisticsService::reportEvent(String const&, Json const&) {
 }
 
 bool SteamStatisticsService::unlockAchievement(String const& name) {
+  if (!SteamAchievementNames.contains(name)) {
+    Logger::debug("Skipping non Steam achievement {}", name);
+    return false;
+  }
   if (!SteamUserStats()->SetAchievement(name.utf8Ptr())) {
     Logger::error("Cannot set Steam achievement {}", name);
     return false;
@@ -68,7 +87,7 @@ StringSet SteamStatisticsService::achievementsUnlocked() const {
       achievements.add(achievement);
     }
   }
-  return {};
+  return achievements;
 }
 
 void SteamStatisticsService::refresh() {
